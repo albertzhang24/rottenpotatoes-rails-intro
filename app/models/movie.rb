@@ -13,4 +13,16 @@ class Movie < ActiveRecord::Base
     end 
     result 
   end 
+  
+  def self.sort_title()
+    result = Movie.order(:title)
+    movie_classes = "hilite p-3 mb-2 bg-warning text-dark"
+    return movie_classes, result
+  end 
+  
+  def self.sort_rd()
+    result = Movie.order(:release_date)
+    rd_classes = "hilite p-3 mb-2 bg-warning text-dark"
+    return rd_classes, result 
+  end 
 end
