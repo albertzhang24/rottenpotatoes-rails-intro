@@ -10,10 +10,10 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings()
     @title_classes = ""
     @rd_classes = ""
+    @ratings_to_show = Movie.all_ratings()
     @movies = Movie.all
     redir_flag = false
     
-
     if params.has_key?(:sort)
       session[:sort] = params[:sort]
     elsif session.has_key?(:sort)
@@ -34,27 +34,27 @@ class MoviesController < ApplicationController
     end 
       
     ratings_list = []
-#     byebug
     if params.has_key?(:ratings)
       params[:ratings].each do | rating, val |
         ratings_list.append(rating)
       end 
       @ratings_to_show = ratings_list
       @movies = Movie.with_ratings(@ratings_to_show)
-    else 
+    else
       @ratings_to_show = Movie.all_ratings()
-      @movies = Movie.all
+      @movies = @movies.all
     end
     
-    # byebug
+#     byebug
     if params.has_key?(:sort)
       if params[:sort] == "title" 
-        @title_classes, @movies = Movie.sort_title()
+          @title_classes = "hilite p-3 mb-2 bg-warning text-dark"
+          @movies = Movie.sort_title(@ratings_to_show)
       else
-        @rd_classes, @movies = Movie.sort_rd()
+          @rd_classes = "hilite p-3 mb-2 bg-warning text-dark"
+          @movies = Movie.sort_rd(@ratings_to_show)
       end 
     end 
-#     return @movies
 #     @movies = Movie.with_ratings(@ratings_to_show)
   end
 
