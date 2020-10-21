@@ -11,41 +11,50 @@ class MoviesController < ApplicationController
     @title_classes = ""
     @rd_classes = ""
     @movies = Movie.all
+    redir_flag = false
     
-    if params.has_key?(:order)
-      session[:order] = params[:order]
-    elsif session.has_key?(:order)
-      params[:order] = session[:order]
+
+    if params.has_key?(:sort)
+      session[:sort] = params[:sort]
+    elsif session.has_key?(:sort)
+      redir_flag = true 
+      params[:sort] = session[:sort]
     end 
     
     if params.has_key?(:ratings)
       session[:ratings] = params[:ratings]
     elsif session.has_key?(:ratings)
-      params[:ratings] = session[:rating]
+      redir_flag = true 
+      params[:ratings] = session[:ratings]
     end 
     
+    
+    if redir_flag 
+      redirect_to movies_path(params)
+    end 
+      
     ratings_list = []
-    unless params[:ratings].nil?
+#     byebug
+    if params.has_key?(:ratings)
       params[:ratings].each do | rating, val |
         ratings_list.append(rating)
       end 
-    end 
-    @ratings_to_show = ratings_list
-
-#     byebug
-  
-    if params[:sort].nil?
+      @ratings_to_show = ratings_list
       @movies = Movie.with_ratings(@ratings_to_show)
-      return @movies 
     else 
+      @ratings_to_show = Movie.all_ratings()
+      @movies = Movie.all
+    end
+    
+    # byebug
+    if params.has_key?(:sort)
       if params[:sort] == "title" 
         @title_classes, @movies = Movie.sort_title()
-        return @movies
       else
         @rd_classes, @movies = Movie.sort_rd()
-        return @movies 
       end 
     end 
+#     return @movies
 #     @movies = Movie.with_ratings(@ratings_to_show)
   end
 
